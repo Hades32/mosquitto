@@ -35,7 +35,7 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #else
 #include <process.h>
-#define snprintf sprintf_s
+//#define snprintf sprintf_s
 #endif
 
 #include <mosquitto.h>

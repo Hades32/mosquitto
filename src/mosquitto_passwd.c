@@ -30,7 +30,7 @@ Contributors:
 #		define true 1
 #		define false 0
 #	endif
-#   define snprintf sprintf_s
+//#   define snprintf sprintf_s
 #	include <io.h>
 #else
 #  include <stdbool.h>

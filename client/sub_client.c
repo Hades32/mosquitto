@@ -24,7 +24,7 @@ Contributors:
 #else
 #include <process.h>
 #include <winsock2.h>
-#define snprintf sprintf_s
+//#define snprintf sprintf_s
 #endif
 
 #include <mosquitto.h>
