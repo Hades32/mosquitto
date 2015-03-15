@@ -11,6 +11,12 @@ Release
 .vs
 *.filters
 *.sdf
+*.vcxproj
+CMakeCache.txt
+*.cmake
+*.opensdf
+*.sln
+*.user
 
 client/mosquitto_pub
 client/mosquitto_sub
