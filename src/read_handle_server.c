@@ -554,6 +554,33 @@ int mqtt3_handle_connect(struct mosquitto_db *db, struct mosquitto *context)
 	}
 #endif
 	context->state = mosq_cs_connected;
+		
+	if( true ){ //TODO check if forced sub is enabled
+		char sub[100] = "\0aaa";
+		char *x=strcat(sub, "C2G/P2P/"); //TODO get sub from config and add client id
+		strcat(sub, context->id);
+		int qos = 2; //maybe get from config
+		int rc2 = mqtt3_sub_add(db, context, sub, qos, &db->subs);
+		if(rc2 == MOSQ_ERR_SUCCESS){
+			_mosquitto_log_printf(NULL, MOSQ_LOG_SUBSCRIBE, "%s %d %s", context->id, qos, sub);
+		}else{
+			_mosquitto_log_printf(NULL, MOSQ_LOG_SUBSCRIBE, "FAILED TO AUTO-SUBSCRIBE %s %d %s", context->id, qos, sub);
+		}
+	}
+	if (true && context->username) { //TODO check if forced sub is enabled
+		char sub[100] = "\0aaa";
+		char *x = strcat(sub, "C2G/P2P/"); //TODO get sub from config and add client id
+		strcat(sub, context->username);
+		int qos = 2; //maybe get from config
+		int rc2 = mqtt3_sub_add(db, context, sub, qos, &db->subs);
+		if (rc2 == MOSQ_ERR_SUCCESS) {
+			_mosquitto_log_printf(NULL, MOSQ_LOG_SUBSCRIBE, "%s %d %s", context->id, qos, sub);
+		}
+		else {
+			_mosquitto_log_printf(NULL, MOSQ_LOG_SUBSCRIBE, "FAILED TO AUTO-SUBSCRIBE %s %d %s", context->id, qos, sub);
+		}
+	}
+	
 	return _mosquitto_send_connack(context, connect_ack, CONNACK_ACCEPTED);
 
 handle_connect_error:
