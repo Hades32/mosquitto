@@ -25,7 +25,9 @@ Contributors:
 #else
 #include <process.h>
 #include <winsock2.h>
-//#define snprintf sprintf_s
+#if _MSC_VER < 1900
+#define snprintf sprintf_s
+#endif
 #endif
 
 #include <mosquitto.h>

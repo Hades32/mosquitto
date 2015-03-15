@@ -12,7 +12,9 @@
  * Generally for Windows native support.
  * ============================================================ */
 #ifdef WIN32
-//#define snprintf sprintf_s
+#if _MSC_VER < 1900
+#define snprintf sprintf_s
+#endif
 #  ifndef strcasecmp
 #    define strcasecmp strcmpi
 #  endif

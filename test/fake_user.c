@@ -35,7 +35,9 @@ POSSIBILITY OF SUCH DAMAGE.
 #include <unistd.h>
 #else
 #include <process.h>
-//#define snprintf sprintf_s
+#if _MSC_VER < 1900
+#define snprintf sprintf_s
+#endif
 #endif
 
 #include <mosquitto.h>
