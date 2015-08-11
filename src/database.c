@@ -59,6 +59,7 @@ int mqtt3_db_open(struct mqtt3_config *config, struct mosquitto_db *db)
 		_mosquitto_log_printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 		return MOSQ_ERR_NOMEM;
 	}
+	child->parent = NULL;
 	child->next = NULL;
 	child->topic = _mosquitto_strdup("");
 	if(!child->topic){
@@ -75,6 +76,7 @@ int mqtt3_db_open(struct mqtt3_config *config, struct mosquitto_db *db)
 		_mosquitto_log_printf(NULL, MOSQ_LOG_ERR, "Error: Out of memory.");
 		return MOSQ_ERR_NOMEM;
 	}
+	child->parent = NULL;
 	child->next = NULL;
 	child->topic = _mosquitto_strdup("$SYS");
 	if(!child->topic){
@@ -195,6 +197,9 @@ void mosquitto__db_msg_store_deref(struct mosquitto_db *db, struct mosquitto_msg
 
 static void _message_remove(struct mosquitto_db *db, struct mosquitto *context, struct mosquitto_client_msg **msg, struct mosquitto_client_msg *last)
 {
+	int i;
+	struct mosquitto_client_msg *tail;
+
 	if(!context || !msg || !(*msg)){
 		return;
 	}
@@ -222,6 +227,29 @@ static void _message_remove(struct mosquitto_db *db, struct mosquitto *context, 
 		*msg = last->next;
 	}else{
 		*msg = context->msgs;
+	}
+	tail = context->msgs;
+	i = 0;
+	while(tail && tail->state == mosq_ms_queued && i<max_inflight){
+		if(tail->direction == mosq_md_out){
+			switch(tail->qos){
+				case 0:
+					tail->state = mosq_ms_publish_qos0;
+					break;
+				case 1:
+					tail->state = mosq_ms_publish_qos1;
+					break;
+				case 2:
+					tail->state = mosq_ms_publish_qos2;
+					break;
+			}
+		}else{
+			if(tail->qos == 2){
+				tail->state = mosq_ms_send_pubrec;
+			}
+		}
+
+		tail = tail->next;
 	}
 }
 
